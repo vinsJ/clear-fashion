@@ -164,16 +164,48 @@ console.log("This is the average basket of the marketplace", Math.round(averageB
 // 2. Log the variable
 // 3. Log the number of products by brands
 
+function createBrands(){
+  let res = {};
+  setUnique.forEach(name => res[name] = [])
+  return res;
+}
+
+function init(){
+  let brands = createBrands();
+  marketplace.forEach(el => {
+  if(!brands[el.brand].includes(el.name)){
+    brands[el.brand].push({'name': el.name, 'price': el.price, 'link': el.link, 'date':el.date})
+  }
+});
+  return brands;
+}
+
+let brands = init()
+
+console.log("This is the list of item per brand", brands);
+
+for( const[key,value] of Object.entries(brands)){
+  console.log(`${key} has ${value.length} products`)
+}
 
 // 🎯 TODO: Sort by price for each brand
 // 1. For each brand, sort the products by price, from highest to lowest
 // 2. Log the sort
+
+for( const[key,value] of Object.entries(brands)){
+  value.sort(sortMarketByPrice);
+}
+console.log("Brands sorted by price", brands)
+
 
 
 // 🎯 TODO: Sort by date for each brand
 // 1. For each brand, sort the products by date, from old to recent
 // 2. Log the sort
 
+for( const[key,value] of Object.entries(brands)){
+  value.sort(sortMarketByDate);
+}
 
 
 
@@ -189,6 +221,51 @@ console.log("This is the average basket of the marketplace", Math.round(averageB
 // 1. Compute the p90 price value of each brand
 // The p90 value (90th percentile) is the lower value expected to be exceeded in 90% of the products
 
+const p90b = []
+
+const test = []
+
+// sort array ascending
+const asc = arr => arr.sort((a, b) => a - b);
+
+const sum = arr => arr.reduce((a, b) => a + b, 0);
+
+const mean = arr => sum(arr) / arr.length;
+
+// sample standard deviation
+const std = (arr) => {
+    const mu = mean(arr);
+    const diffArr = arr.map(a => (a - mu) ** 2);
+    return Math.sqrt(sum(diffArr) / (arr.length - 1));
+};
+
+const quantile = (arr, q) => {
+    const sorted = asc(arr);
+    const pos = (sorted.length - 1) * q;
+    const base = Math.floor(pos);
+    const rest = pos - base;
+    if (sorted[base + 1] !== undefined) {
+        return sorted[base] + rest * (sorted[base + 1] - sorted[base]);
+    } else {
+        return sorted[base];
+    }
+};
+
+function listPriceBrands(){
+  let brandsPrice = createBrands();
+  for(const[key,value] of Object.entries(brands)){
+    var listPricesb = []
+    value.forEach(el => {
+    listPricesb.push(el.price)
+    });
+    brandsPrice[key] = quantile(listPricesb, .50);
+
+  }
+  return brandsPrice;
+}
+
+
+console.log(listPriceBrands())
 
 
 
@@ -275,10 +352,29 @@ const COTELE_PARIS = [
 // 1. Find the product with the uuid `b56c6d88-749a-5b4c-b571-e5b5c6483131`
 // 2. Log the product
 
+function findProduct(uuid){
+  var elem;
+  COTELE_PARIS.forEach(el => {
+    if(el.uuid == uuid){
+      elem = el;
+    }
+  });
+  return elem;
+}
+
+let prod = findProduct("b56c6d88-749a-5b4c-b571-e5b5c6483131");
+console.log("Product with uuid b56c6d88-749a-5b4c-b571-e5b5c6483131: ", prod.name);
+
 
 // 🎯 TODO: Delete a specific product
 // 1. Delete the product with the uuid `b56c6d88-749a-5b4c-b571-e5b5c6483131`
 // 2. Log the new list of product
+
+console.log("Initial length: ", COTELE_PARIS.length);
+const id = "b56c6d88-749a-5b4c-b571-e5b5c6483131";
+let COTELE_PARIS_rm = COTELE_PARIS.filter(prod => prod.uuid != id)
+console.log(COTELE_PARIS_rm);
+
 
 // 🎯 TODO: Save the favorite product
 let blueJacket = {
@@ -295,6 +391,11 @@ jacket.favorite = true;
 // 1. Log `blueJacket` and `jacket` variables
 // 2. What do you notice?
 
+console.log("Blue jacket: " + JSON.stringify(blueJacket));
+console.log("Copied Jacket: " + JSON.stringify(jacket));
+
+// 2. It's a shallow copy, so it has a reference to the original object. Any modification will affect both objects.
+
 blueJacket = {
   'link': 'https://coteleparis.com/collections/tous-les-produits-cotele/products/la-veste-bleu-roi',
   'price': 110,
@@ -302,8 +403,11 @@ blueJacket = {
 };
 
 // 3. Update `jacket` property with `favorite` to true WITHOUT changing blueJacket properties
+let jacket2 = JSON.parse(JSON.stringify(blueJacket));
+jacket2.favorite = true;
 
-
+console.log("Jacket deep copied: " + JSON.stringify(jacket2));
+console.log("Blue Jacket: " + JSON.stringify(blueJacket));
 
 
 
@@ -316,3 +420,5 @@ blueJacket = {
 // 🎯 TODO: Save in localStorage
 // 1. Save MY_FAVORITE_BRANDS in the localStorage
 // 2. log the localStorage
+
+localStorage.MY_FAVORITE_BRANDS = MY_FAVORITE_BRANDS;
