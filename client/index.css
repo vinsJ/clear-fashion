@@ -1,0 +1,28 @@
+@import 'https://fonts.googleapis.com/css?family=Roboto:300,400,500';
+
+body {
+    margin: 0 auto;
+    max-width: 50em;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    line-height: 1.5;
+    color: #555;
+  }
+
+h1,
+h2,
+strong {
+  color: #333;
+}
+
+a {
+    color: #e81c4f;
+  }
+
+.product:hover:after,
+.product.fav:after {
+    content: ' \2605';
+    color: rgb(255, 203, 0);
+}
+.product.fav:hover:after {
+    content: ' \2605';
+  }
