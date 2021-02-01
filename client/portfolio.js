@@ -334,7 +334,7 @@ const filterPrice = (products, price, order) =>{
 selectShow.addEventListener('change', event => {
   fetchProducts(currentPagination.currentPage, parseInt(event.target.value))
     .then(setCurrentProducts)
-    .then(() => render(currentProducts, currentPagination));
+    .then(() => render(filter(currentProducts,currentFilters)));
 });
 /** 
 * Select the page of products to display
@@ -343,7 +343,7 @@ selectShow.addEventListener('change', event => {
 selectPage.addEventListener('change', event => {
   fetchProducts(parseInt(event.target.value), parseInt(selectShow.value))
     .then(setCurrentProducts)
-    .then(() => render(currentProducts, currentPagination));
+    .then(() => render(filter(currentProducts,currentFilters)));
 });
 
 selectBrand.addEventListener('change', event => {

@@ -1,5 +1,6 @@
 /* eslint-disable no-console, no-process-exit */
 const dedicatedbrand = require('./sources/dedicatedbrand');
+const mudjeansbrands = require('./sources/mudjeansbrands');
 
 async function sandbox (eshop = 'https://www.dedicatedbrand.com/en/men/news') {
   try {
@@ -16,6 +17,19 @@ async function sandbox (eshop = 'https://www.dedicatedbrand.com/en/men/news') {
   }
 }
 
+async function testData (url = 'https://mudjeans.eu/collections/men') {
+  try{
+    console.log(`🕵️‍♀️  browsing ${url} source`);
+    const products = await mudjeansbrands.scrape(url);
+    console.log(products);
+
+  } catch (e){
+    console.error(e);
+    process.exit(1);
+  }
+}
+
 const [,, eshop] = process.argv;
 
-sandbox(eshop);
+//sandbox(eshop);
+testData();
