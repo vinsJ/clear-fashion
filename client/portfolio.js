@@ -150,7 +150,6 @@ const renderIndicators = pagination => {
 
 const render = (products, pagination) => {
   updateIndicatorsPrice(products);
-
   renderBrands(products);
   renderProducts(products);
   renderPagination(pagination);
@@ -238,9 +237,13 @@ const filter = (productsArray, filters) => {
 
   if(filters["checkReasonable"] == true){
     products = filterPrice(products, 50, "asc")
-  } else if(filters["checkRecently"] == true){
+  }
+
+  if(filters["checkRecently"] == true){
     products = filterProductDate(products, 14, "asc");
-  } else if(filters["checkFavs"] == true){
+  } 
+
+  if(filters["checkFavs"] == true){
     products = products.filter(product => currentFavsProducts.includes(product.uuid) == true);
   }
 
@@ -371,15 +374,20 @@ checkFavs.addEventListener('change', function() {
   currentFilters['checkFavs'] = this.checked;
   renderProducts(filter(currentProducts,currentFilters));
   renderIndicators(currentPagination);
+
+  currentFavsProducts.forEach(function(uuid) {
+    document.getElementById(uuid).className = 'product fav';
+  });
+  
 });
 
 sectionProducts.addEventListener('click', function(e) {
   if(currentFavsProducts.includes(e.target.id)){
     currentFavsProducts.splice(currentFavsProducts.indexOf(e.target.id));
-    
+    e.target.className = 'product';
   } else {
     currentFavsProducts.push(e.target.id);
-    e.target.className = 'fav';
+    e.target.className = 'product fav';
   }
 });
 

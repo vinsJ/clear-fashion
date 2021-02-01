@@ -23,6 +23,7 @@ a {
     content: ' \2605';
     color: rgb(255, 203, 0);
 }
+
 .product.fav:hover:after {
-    content: ' \2605';
+    content: ' \2606';
   }
