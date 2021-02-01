@@ -3,7 +3,6 @@ const cheerio = require('cheerio');
 
 const parse = data => {
     const $ =  cheerio.load(data);
-    
     return $('.content-row .product-link')
         .map((i, element) => {
             const nameP = $(element)
@@ -14,11 +13,10 @@ const parse = data => {
             let price = $(element)
                   .find('.row .product-price:first')
                   .text();
-            price = price.substring(
+            price = parseInt(price.substring(
                 price.lastIndexOf('€') + 1,
                 price.length - 1
-            )
-            console.log("price: ", price);
+            ));
             return {nameP, price};
         })
         .get();
