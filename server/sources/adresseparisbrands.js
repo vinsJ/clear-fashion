@@ -19,7 +19,6 @@ const parse = data => {
           .find('.price')
           .text()
       );
-
       return {name, price};
     })
     .get();
