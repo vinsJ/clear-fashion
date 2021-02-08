@@ -20,7 +20,8 @@ async function sandbox (brand = None) {
     let products = [];
     if(brand == 'Dedicated'){
       url = 'https://www.dedicatedbrand.com/en/men/news'
-      products = await dedicatedbrand.scrape(url);
+      //products = await dedicatedbrand.scrape(url);
+      products = await dedicatedbrand.getAPI('https://www.dedicatedbrand.com/en/loadfilter?category=men');
     } else if(brand == 'Mud-Jeans') {
       url = 'https://mudjeans.eu/collections/men'
       products = await mudjeansbrands.scrape(url);
@@ -56,4 +57,3 @@ async function sandbox (brand = None) {
 const [,, eshop] = process.argv;
 
 sandbox(eshop);
-//testData2();
