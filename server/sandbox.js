@@ -7,9 +7,7 @@ const fs = require('fs')
 
 class Brands {
   constructor(brandName, url, products){
-    this.brandName = brandName;
-    this.url = url;
-    this.products = products;
+    this.brand = {'name': brandName, url, products};
   }
 }
 
@@ -26,7 +24,7 @@ async function sandbox (brand = None) {
       url = 'https://mudjeans.eu/collections/men'
       products = await mudjeansbrands.scrape(url);
     } else if(brand == 'Adresse-Paris'){
-      url = 'https://adresse.paris/630-toute-la-collection'
+      url = 'https://adresse.paris/630-toute-la-collection?id_category=630&n=110'
       products = await adresseparisbrands.scrape(url);
     } else {
       console.log("sorry, the brand you're looking for doesn't exists here");
@@ -38,7 +36,10 @@ async function sandbox (brand = None) {
     console.log('Done scraping');
 
     const myBrand = new Brands(brand, url, products);
-    const jsonContent = JSON.stringify(myBrand);
+    arrayBrands = []; 
+    arrayBrands.push(myBrand);
+
+    const jsonContent = JSON.stringify(arrayBrands);
 
     fs.writeFile("./products.json", jsonContent, 'utf8', function (err) {
       if (err) {
@@ -54,6 +55,25 @@ async function sandbox (brand = None) {
   }
 }
 
+async function updateFile(fileName, brand, products){
+  fs.readFile('./' + fileName, 'utf-8', (err, data) => {
+    if(err) {
+      throw err;
+    }
+
+    fileF = JSON.parse(data.toString());
+    fileF
+
+  })
+}
+
+//TODO: Check is product exists before saving 
+//TODO: Do not erase all JSON, save product in the array of the brand
+
+//* scrap additional information for Adresse-Paris (and check if we scrap all the products) => DONE 
+
 const [,, eshop] = process.argv;
 
 sandbox(eshop);
+
+//updateFile("products.json", null);

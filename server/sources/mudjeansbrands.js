@@ -13,11 +13,39 @@ const parse = data => {
             let price = $(element)
                   .find('.row .product-price:first')
                   .text();
+            // The output is 'Buy€119,00\n', so we have to take a substring. 
             price = parseInt(price.substring(
                 price.lastIndexOf('€') + 1,
                 price.length - 1
             ));
-            return {nameP, price};
+
+            let lease = $(element)
+                .find('.row .product-price:last')
+                .text();
+
+            // In case a product isn't for lease 
+            if(lease.includes('Lease')){
+                lease = parseFloat(lease.substring(
+                    lease.lastIndexOf('€') + 1,
+                    lease.length
+                ).replace(',','.'));
+            } else {
+                lease = null
+            }
+
+            prices = {price, lease}
+
+            let imagesH = $(element)
+                .find('.product-image');
+            
+            
+            
+            fImage = imagesH.find('.primary-image').find('picture').children().attr('media',' max-width: 320px')[0].attribs.srcset.split(',')[2].slice(0,-3);
+            sImage = imagesH.find('.secondary-image').find('picture').children().attr('media',' max-width: 320px')[0].attribs.srcset.split(',')[2].slice(0,-3);
+            images = [fImage,sImage];
+
+
+            return {'name': nameP, 'price' : prices, 'category': ['Jeans'], images};
         })
         .get();
 }
@@ -34,4 +62,3 @@ module.exports.scrape = async url => {
   
     return null;
   };
-  

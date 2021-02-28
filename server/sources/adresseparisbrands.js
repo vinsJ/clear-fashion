@@ -11,15 +11,38 @@ const parse = data => {
 
   return $('.product_list .product-container')
     .map((i, element) => {
+
       const name = $(element)
         .find('.product-name')
         .attr('title');
+
       const price = parseInt(
         $(element)
           .find('.price')
           .text()
       );
-      return {name, price};
+
+      const oldPrice = parseInt(
+        $(element)
+          .find('.old-price')
+          .text()
+      );
+
+      let images = $(element)
+        .find('.product_img_link')
+        .children()
+
+      let linkImages = []
+
+      try {
+        linkImages.push(images[0].attribs["data-original"]);
+        linkImages.push(images[1].attribs["data-rollover"]);
+      } catch {
+
+      }
+
+
+      return {name, 'price' : {'price' : price, 'priceBeforeDiscount' : oldPrice, discount : price- oldPrice}, 'images' : linkImages};
     })
     .get();
 };
