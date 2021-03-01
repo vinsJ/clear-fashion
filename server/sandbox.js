@@ -7,7 +7,9 @@ const fs = require('fs')
 
 class Brands {
   constructor(brandName, url, products){
-    this.brand = {'name': brandName, url, products};
+    this.name = brandName
+    this.url = url
+    this.products = products
   }
 }
 
@@ -31,8 +33,6 @@ async function sandbox (brand = None) {
       process.exit(0);
     }
 
-    //const jsonContent = JSON.stringify(products);
-    console.log(products);
     console.log('Done scraping');
 
     const myBrand = new Brands(brand, url, products);
@@ -41,13 +41,7 @@ async function sandbox (brand = None) {
 
     const jsonContent = JSON.stringify(arrayBrands);
 
-    fs.writeFile("./products.json", jsonContent, 'utf8', function (err) {
-      if (err) {
-          return console.log(err);
-      }
-      console.log("The file was saved!");
-      process.exit(0);
-  }); 
+    updateFile('products.json', myBrand);
 
   } catch (e) {
     console.error(e);
@@ -55,25 +49,45 @@ async function sandbox (brand = None) {
   }
 }
 
-async function updateFile(fileName, brand, products){
+function updateFile(fileName, brandUpdated){
   fs.readFile('./' + fileName, 'utf-8', (err, data) => {
     if(err) {
       throw err;
     }
 
     fileF = JSON.parse(data.toString());
-    fileF
+    brand = fileF.find(b => b.name == brandUpdated.name);
 
-  })
+    (brand) ? brand.products = brandUpdated.products : fileF.push(brandUpdated);
+
+    fs.writeFile('./' + fileName, JSON.stringify(fileF), 'utf-8', function (err) {
+      if(err) {
+        return console.log(err);
+      }
+
+      console.log("The file was saved!");
+      process.exit(0);
+    });
+
+  });
+
 }
 
-//TODO: Check is product exists before saving 
-//TODO: Do not erase all JSON, save product in the array of the brand
+function objectsAreSame(x, y) {
+  var objectsAreSame = true;
+  for(var propertyName in x) {
+     if(x[propertyName] !== y[propertyName]) {
+        objectsAreSame = false;
+        break;
+     }
+  }
+  return objectsAreSame;
+}
 
+//! Check is product exists before saving => Not useful since I have to go through all the JSON check if there is any modification, delete objects that are not in the
+//* Do not erase all JSON, save product in the array of the brand => Done
 //* scrap additional information for Adresse-Paris (and check if we scrap all the products) => DONE 
 
 const [,, eshop] = process.argv;
 
 sandbox(eshop);
-
-//updateFile("products.json", null);
