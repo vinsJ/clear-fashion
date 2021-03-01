@@ -5,6 +5,8 @@ const adresseparisbrands = require('./sources/adresseparisbrands')
 
 const fs = require('fs')
 
+const db = require('./database');
+
 class Brands {
   constructor(brandName, url, products){
     this.name = brandName
@@ -73,15 +75,44 @@ function updateFile(fileName, brandUpdated){
 
 }
 
-function objectsAreSame(x, y) {
-  var objectsAreSame = true;
-  for(var propertyName in x) {
-     if(x[propertyName] !== y[propertyName]) {
-        objectsAreSame = false;
-        break;
-     }
+
+function uploadData(){
+
+  fs.readFile('./products.json', 'utf-8', (err, data) => {
+    if(err){
+      throw err;
+    }
+
+    fileF = JSON.parse(data.toString());
+    if(fileF){
+      res = db.insertData(fileF).then()
+      if(res.insertedCount = fileF.length){
+        console.log("Upload succesfull");
+      } else {
+        console.log(res);
+      }
+    }
+  });
+}
+
+async function getProducts(brandName = null, price = null){
+  if(brandName){
+    let res = await db.getQuery({name: brandName});
+    console.log(res.products);
   }
-  return objectsAreSame;
+
+  if(price){
+    let res = await db.getQuery({products: {$elemMatch: {"price.price" : {$lt :price}}}});
+
+    fs.writeFile('./' + 'test.json', JSON.stringify(res), 'utf-8', function (err) {
+      if(err) {
+        return console.log(err);
+      }
+
+      console.log("The file was saved!");
+      process.exit(0);
+    });
+  }
 }
 
 //! Check is product exists before saving => Not useful since I have to go through all the JSON check if there is any modification, delete objects that are not in the
@@ -90,4 +121,11 @@ function objectsAreSame(x, y) {
 
 const [,, eshop] = process.argv;
 
-sandbox(eshop);
+//sandbox(eshop);
+//uploadData();
+//db.getQuery({name: 'Mud-Jeans'});
+
+getProducts(null, 30);
+
+
+
