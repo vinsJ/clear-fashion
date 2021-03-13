@@ -47,7 +47,12 @@ const parse = data => {
             sImage = imagesH.find('.secondary-image').find('picture').children().attr('media',' max-width: 320px')[0].attribs.srcset.split(',')[2].slice(0,-3);
             images = [fImage,sImage];
 
-            let product = new Product(nameP, price, images, brandName);
+            let link = "https://mudjeans.eu"
+            link += $(element)
+                .find(".product-image")
+                .attr('href');
+
+            let product = new Product(nameP, price, images, brandName, link);
             return product;
            // return {'name': nameP, 'price' : prices, 'category': ['Jeans'], images};
         })

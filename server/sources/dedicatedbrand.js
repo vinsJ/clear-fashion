@@ -96,7 +96,8 @@ module.exports.getAPI = async (url) => {
         rawProduct.name, 
         rawProduct.price.priceAsNumber, 
         rawProduct.image,
-        brandName
+        brandName,
+        "https://www.dedicatedbrand.com/en/" + rawProduct.canonicalUri
         )
 
       return product;

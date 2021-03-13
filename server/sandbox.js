@@ -157,8 +157,8 @@ const [,, eshop] = process.argv;
 
 //sandbox(eshop);
 
-//uploadData();
+uploadData();
 
-getProducts('Mud-Jeans', null, null);
+//getProducts('Mud-Jeans', null, null);
 //getProducts(null, 30, null);
 //getProducts(null, null, true);

@@ -16,6 +16,10 @@ const parse = data => {
   return $('.product_list .product-container')
     .map((i, element) => {
 
+      const link = $(element)
+        .find('.product_img_link')
+        .attr('href')
+
       const name = $(element)
         .find('.product-name')
         .attr('title');
@@ -44,7 +48,7 @@ const parse = data => {
       } catch {
 
       }
-      let product = new Product(name, parseFloat(price), linkImages, brandName);
+      let product = new Product(name, parseFloat(price), linkImages, brandName, link);
       return product;
       //return {name, 'price' : {'price' : price, 'priceBeforeDiscount' : oldPrice, discount : price- oldPrice}, 'images' : linkImages};
     })
