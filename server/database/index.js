@@ -43,14 +43,17 @@ async function agg(db, query){
     }
 }
 
-async function query(db, query, sort = null) {
+async function query(db, query, sort = null, limit = null) {
     try{
         const collection = db.collection('products');
         let res;
         if(!sort){
             res = await collection.find(query).toArray();
             return res;     
-        } else {
+        } else if(sort && limit){
+            res = await collection.find(query).sort({price : 1}).limit(limit).toArray();
+            return res;
+        }   else {
             res = await collection.find(query).sort(sort).toArray();
             return res;   
         }
@@ -61,13 +64,15 @@ async function query(db, query, sort = null) {
     }
 }
 
-async function run(querry, sort = null, type){
+async function run(querry, sort = null, type, limit = null){
     try{
         console.log("Connection ... 🦄")
         db = await connect();
         let res = "";
         if(type == 'find'){
             res = await query(db, querry, sort);
+        } else if(type == 'API'){
+            res = await query(db, querry, sort, limit);
         } else {
             res = await agg(db, querry);
         }

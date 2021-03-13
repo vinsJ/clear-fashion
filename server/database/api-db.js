@@ -5,4 +5,31 @@ const getProductID = async function(id){
     return res;
 }
 
+const getProducts = async function(filter) {
+    let query = "";
+    if(!filter.brand) {
+        if(filter.price < 0){
+            query = {price : {$lt: filter.price}};
+        } else if (filter.price > 0){
+            query = {price : {$gt: filter.price}};
+        } else {
+            query = {}
+        }
+    } else {
+        if(filter.price < 0){
+            query = {brandName : filter.brand, price : {$lt: filter.price}};
+        } else if (filter.price > 0){
+            query = {brandName : filter.brand, price : {$gt: filter.price}};
+        } else {
+            query = {brandName : filter.brand};
+
+        }
+    }
+
+    
+    let res = await db.getQuery(query, true, 'API', filter.limit);
+    return res;
+}
+
 module.exports.getProductID = getProductID;
+module.exports.getProducts = getProducts;

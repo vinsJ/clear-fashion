@@ -43,9 +43,32 @@ app.get('/products/?:id', async function (request, response, next) {
 });
 
 app.get('/products/search', async function (request, response) {
-  console.log("HEY HO")
-  console.log(request.query);
-  response.json(200)
+  let limit = 12;
+  let price = -1;
+  let brand = null;
+
+  // retrieving parameters
+  if(request.query.limit){
+    limit = parseInt(request.query.limit);
+  }
+
+  if(request.query.price){
+    price = parseFloat(request.query.price);
+  }
+
+  if(request.query.brand){
+    brand = request.query.brand;
+  }
+  result = await db.getProducts({limit, price, brand})
+  if (result) {
+    if (result.length >= 1) {
+      response.send({ 'status': 200, 'product': result });
+    } else {
+      response.send({ 'status': 404, 'message': 'No item found' });
+    }
+  } else {
+    response.send({ 'status': 500, 'message': 'Could not access database' });
+  }
 });
 
 app.listen(PORT);
