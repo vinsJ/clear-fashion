@@ -157,7 +157,10 @@ const [,, eshop] = process.argv;
 
 //sandbox(eshop);
 
-uploadData();
+//uploadData();
+db.getQuery({uuid: "5d87a0f8-10f7-5eea-8d9b-235063f58638"}, null, 'find').then(res => {
+  console.log(res);
+})
 
 //getProducts('Mud-Jeans', null, null);
 //getProducts(null, 30, null);

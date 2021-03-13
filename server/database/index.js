@@ -4,21 +4,31 @@ const {MongoClient} = require('mongodb');
 const MONGODB_URI = 'mongodb+srv://' + creds.user + ':' + creds.password + '@' + creds.cluster_url + '?retryWrites=true&w=majority'
 const MONGODB_DB_NAME = 'clear-fashion';
 
-const client = new MongoClient(MONGODB_URI,  {'useUnifiedTopology': true});
+let client = new MongoClient(MONGODB_URI,  {'useUnifiedTopology': true});
+let db = null;
 
 async function connect(){
+    if(db){
+        console.log("Already connected ! 🔌⚡");
+        return db;
+    }
+    try{
+        await client.connect();
+        db =  client.db(MONGODB_DB_NAME)
+        console.log("Connected ! 🦄")
+        return db;
+    } catch(e){
+        console.log("🚨", e);
+    }
 
-    await client.connect();
-    const db =  client.db(MONGODB_DB_NAME)
-
-    return {client, db};
 }
 
 async function close(client){
     try{
         await client.close();
+        console.log("Disconected ! 🔌🪓")
     } catch(e) {
-        console.log(e);
+        console.log("🚨", e);
     }
 
 }
@@ -29,7 +39,7 @@ async function agg(db, query){
         const res = await collection.aggregate(query, { "allowDiskUse" : true }).toArray();
         return res;
     } catch(e) {
-        console.log(e)
+        console.log("🚨", e);
     }
 }
 
@@ -47,49 +57,36 @@ async function query(db, query, sort = null) {
   
 
     } catch(e) {
-        console.log(e);
+        console.log("🚨", e);
     }
 }
 
 async function run(querry, sort = null, type){
-    let connection = {}
     try{
-        connection = await connect();
-        let res;
+        console.log("Connection ... 🦄")
+        db = await connect();
+        let res = "";
         if(type == 'find'){
-            res = await query(connection.db, querry, sort);
+            res = await query(db, querry, sort);
         } else {
-            res = await agg(connection.db, querry);
+            res = await agg(db, querry);
         }
-        
         return res;
-
     } catch(e) {
-
-        console.log(e);
-        await close(connection.client);
-    } finally {
-        await close(connection.client);
-    }
+        console.log("🚨", e);
+    } 
 
 } 
 
 async function insertData(data){
-    let connection = {}
     try{
-
-        connection = await connect();
-        const collection = connection.db.collection('products');
+        db = await connect();
+        const collection = db.collection('products');
         const result = await collection.insertMany(data);
-
         return result;
 
     } catch(e) {
-
-        console.log(e);
-        await close(connection.client);
-    } finally {
-        await close(connection.client);
+        console.log("🚨", e);
     }
 }
 
