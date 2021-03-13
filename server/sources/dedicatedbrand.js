@@ -1,6 +1,9 @@
 const axios = require("axios");
 const cheerio = require("cheerio");
 
+const Product = require('./myProduct');
+const brandName = "Dedicated";
+
 /**
  * Parse webpage e-shop
  * @param  {String} data - html response
@@ -16,7 +19,7 @@ const parse = (data) => {
         .text()
         .trim()
         .replace(/\s/g, " ");
-      const price = parseInt($(element).find(".productList-price").text());
+      const price = parseFloat($(element).find(".productList-price").text());
 
       return { name, price };
     })
@@ -65,19 +68,36 @@ module.exports.getAPI = async (url) => {
   products = data.products
     .filter((product) => product.length != 0)
     .map((rawProduct) => {
+
+      // Get the category of a product 
+      //TODO: Implement category in other products
       var nbSep = (rawProduct.canonicalUri.match(/\//g) || []).length;
       var cleanUri = getCleanUri(rawProduct.canonicalUri, nbSep);
 
-      product = {
-        name: rawProduct.name,
-        price: {
-          price: rawProduct.price.priceAsNumber,
-          priceBeforeDiscount: rawProduct.price.priceBeforeDiscountAsNumber,
-          discount: rawProduct.price.discountPercent,
-        },
-        category: categories[cleanUri].split("::"),
-        images: rawProduct.image,
-      };
+      // product = {
+      //   name: rawProduct.name,
+      //   price: {
+      //     price: rawProduct.price.priceAsNumber,
+      //     priceBeforeDiscount: rawProduct.price.priceBeforeDiscountAsNumber,
+      //     discount: rawProduct.price.discountPercent,
+      //   },
+      //   category: categories[cleanUri].split("::"),
+      //   images: rawProduct.image,
+      // };
+
+      // product = {
+      //   name: rawProduct.name,
+      //   price: rawProduct.price.priceAsNumber,
+      //   category: categories[cleanUri].split("::"),
+      //   images: rawProduct.image,
+      // };
+
+      let product = new Product(
+        rawProduct.name, 
+        rawProduct.price.priceAsNumber, 
+        rawProduct.image,
+        brandName
+        )
 
       return product;
     });

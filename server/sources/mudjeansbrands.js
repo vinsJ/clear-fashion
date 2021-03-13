@@ -1,6 +1,9 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 
+const Product = require('./myProduct');
+const brandName = "Mud-Jeans";
+
 const parse = data => {
     const $ =  cheerio.load(data);
     return $('.content-row .product-link')
@@ -14,7 +17,7 @@ const parse = data => {
                   .find('.row .product-price:first')
                   .text();
             // The output is 'Buy€119,00\n', so we have to take a substring. 
-            price = parseInt(price.substring(
+            price = parseFloat(price.substring(
                 price.lastIndexOf('€') + 1,
                 price.length - 1
             ));
@@ -44,8 +47,9 @@ const parse = data => {
             sImage = imagesH.find('.secondary-image').find('picture').children().attr('media',' max-width: 320px')[0].attribs.srcset.split(',')[2].slice(0,-3);
             images = [fImage,sImage];
 
-
-            return {'name': nameP, 'price' : prices, 'category': ['Jeans'], images};
+            let product = new Product(nameP, price, images, brandName);
+            return product;
+           // return {'name': nameP, 'price' : prices, 'category': ['Jeans'], images};
         })
         .get();
 }

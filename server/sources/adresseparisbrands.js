@@ -1,6 +1,10 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 
+const Product = require('./myProduct');
+
+const brandName = "Adresse-Paris";
+
 /**
  * Parse webpage e-shop
  * @param  {String} data - html response
@@ -40,9 +44,9 @@ const parse = data => {
       } catch {
 
       }
-
-
-      return {name, 'price' : {'price' : price, 'priceBeforeDiscount' : oldPrice, discount : price- oldPrice}, 'images' : linkImages};
+      let product = new Product(name, parseFloat(price), linkImages, brandName);
+      return product;
+      //return {name, 'price' : {'price' : price, 'priceBeforeDiscount' : oldPrice, discount : price- oldPrice}, 'images' : linkImages};
     })
     .get();
 };

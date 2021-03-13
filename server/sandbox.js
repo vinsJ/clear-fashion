@@ -35,34 +35,27 @@ async function sandbox (brand = None) {
       process.exit(0);
     }
 
-    console.log('Done scraping');
+    console.log('Done scraping 🤩');
 
-    const myBrand = new Brands(brand, url, products);
-    arrayBrands = []; 
-    arrayBrands.push(myBrand);
-
-    const jsonContent = JSON.stringify(arrayBrands);
-
-    updateFile('products.json', myBrand);
+    updateFile('products.json', products);
 
   } catch (e) {
     console.error(e);
     process.exit(1);
   }
 }
-
+// Update the products of a brand (delete and replace)
 function updateFile(fileName, brandUpdated){
   fs.readFile('./' + fileName, 'utf-8', (err, data) => {
     if(err) {
       throw err;
     }
 
-    fileF = JSON.parse(data.toString());
-    brand = fileF.find(b => b.name == brandUpdated.name);
+    let fileF = JSON.parse(data.toString());
+    let brandProducts = fileF.filter(prod => prod.brandName != brandUpdated[0].brandName);
+    brandProducts = brandProducts.concat(brandUpdated)
 
-    (brand) ? brand.products = brandUpdated.products : fileF.push(brandUpdated);
-
-    fs.writeFile('./' + fileName, JSON.stringify(fileF), 'utf-8', function (err) {
+    fs.writeFile('./' + fileName, JSON.stringify(brandProducts), 'utf-8', function (err) {
       if(err) {
         return console.log(err);
       }
@@ -85,35 +78,76 @@ function uploadData(){
 
     fileF = JSON.parse(data.toString());
     if(fileF){
-      res = db.insertData(fileF).then()
-      if(res.insertedCount = fileF.length){
-        console.log("Upload succesfull");
-      } else {
-        console.log(res);
-      }
+      console.log("Uploading... 🛸")
+      db.insertData(fileF).then(res => {
+        if(res.insertedCount = fileF.length){
+          console.log("Upload succesfull 👽👾");
+        } else {
+          console.log(res);
+        }
+      });
     }
   });
 }
 
-async function getProducts(brandName = null, price = null){
-  if(brandName){
-    let res = await db.getQuery({name: brandName});
-    console.log(res.products);
+async function getProducts(brandNameF = null, priceF = null, sort = null){
+  if(brandNameF){
+    let res = await db.getQuery({brandName: brandNameF}, null,'find');
+    console.log(testBrandName(brandNameF, res));
   }
 
-  if(price){
-    let res = await db.getQuery({products: {$elemMatch: {"price.price" : {$lt :price}}}});
-
-    fs.writeFile('./' + 'test.json', JSON.stringify(res), 'utf-8', function (err) {
-      if(err) {
-        return console.log(err);
-      }
-
-      console.log("The file was saved!");
-      process.exit(0);
-    });
+  if(priceF){
+    let res = await db.getQuery({price: {$lt: priceF}}, null, 'find');
+    console.log(res);
+    console.log(testPrice(priceF, res));
   }
+
+  if(sort){
+    let res = await db.getQuery(null, {price : -1}, 'find');
+    console.log(testSortPrice(res));
+  }
+
 }
+
+// ------------ Unit test ------------ //
+
+// Check if query worked
+function testBrandName(brandName, products){
+  products.forEach(prod => {
+    if(prod.brandName != brandName){
+      return false;
+    }
+  });
+
+  return true;
+}
+
+// Check if query worked
+function testPrice(price, products){
+  products.forEach(prod => {
+    if(prod.price > price){
+      return false;
+    }
+  });
+
+  return true;
+}
+
+// Check if query worked
+function testSortPrice(products){
+  let oldPrice = -1;
+  products.forEach(prod => {
+    if(prod.price > oldPrice){
+      return false;
+    }
+
+    oldPrice = prod.price
+  });
+
+  return true;
+}
+
+// ------------ Unit test ------------ //
 
 //! Check is product exists before saving => Not useful since I have to go through all the JSON check if there is any modification, delete objects that are not in the
 //* Do not erase all JSON, save product in the array of the brand => Done
@@ -122,10 +156,9 @@ async function getProducts(brandName = null, price = null){
 const [,, eshop] = process.argv;
 
 //sandbox(eshop);
+
 //uploadData();
-//db.getQuery({name: 'Mud-Jeans'});
 
-getProducts(null, 30);
-
-
-
+getProducts('Mud-Jeans', null, null);
+//getProducts(null, 30, null);
+//getProducts(null, null, true);
