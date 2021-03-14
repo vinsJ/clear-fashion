@@ -155,12 +155,16 @@ function testSortPrice(products){
 
 const [,, eshop] = process.argv;
 
+//* Scrapping 
+
 //sandbox(eshop);
 
+//* Uploading data test
+
 //uploadData();
-db.getQuery({uuid: "5d87a0f8-10f7-5eea-8d9b-235063f58638"}, null, 'find').then(res => {
-  console.log(res);
-})
+
+
+//* Database link test
 
 //getProducts('Mud-Jeans', null, null);
 //getProducts(null, 30, null);
