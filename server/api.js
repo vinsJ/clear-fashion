@@ -21,13 +21,11 @@ app.get('/', (request, response) => {
 });
 
 app.get('/products/?:id', async function (request, response, next) {
-  console.log(request.params);
-  console.log(request.query);
-
   id = request.params.id;
   if (id == "search") {
     next();
   } else {
+    console.log("products/:id triggered... 🕵️‍♀️")
     db.getProductID(id).then(result => {
       if (result) {
         if (result.length >= 1) {
@@ -43,8 +41,9 @@ app.get('/products/?:id', async function (request, response, next) {
 });
 
 app.get('/products/search', async function (request, response) {
+  console.log("products/search triggered... 🕵️‍♀️")
   let limit = 12;
-  let price = -1;
+  let price = 0;
   let brand = null;
 
   // retrieving parameters
@@ -64,7 +63,7 @@ app.get('/products/search', async function (request, response) {
     if (result.length >= 1) {
       response.send({ 'status': 200, 'product': result });
     } else {
-      response.send({ 'status': 404, 'message': 'No item found' });
+      response.send({ 'status': 404, 'message': 'No item found for given parameters', 'parameters' : {price, brand, limit} });
     }
   } else {
     response.send({ 'status': 500, 'message': 'Could not access database' });
