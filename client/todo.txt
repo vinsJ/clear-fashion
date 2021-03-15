@@ -1,0 +1,20 @@
+# 1
+
+When we load the page, call the db and see => 
+
+- How many documents 
+- List of unique brands
+
+
+## Idea 1 
+
+Handle the pages with the index of the array with all the products 
+
+## Idea 2 
+
+Make a call to the API for : 
+
+- Brand name 
+- Prices 
+- Limit 
+

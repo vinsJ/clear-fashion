@@ -1,7 +1,15 @@
-creds = require('./creds.json')
+creds = require('./creds.json');
+
+//! .env must be in root folder. (Here, server)
+require('dotenv').config();
+
+const user = process.env.USER;
+const password  = process.env.PASSWORD;
+const cluster_url = process.env.CLUSTER_URL;
+
 
 const {MongoClient} = require('mongodb');
-const MONGODB_URI = 'mongodb+srv://' + creds.user + ':' + creds.password + '@' + creds.cluster_url + '?retryWrites=true&w=majority'
+const MONGODB_URI = 'mongodb+srv://' + user + ':' + password + '@' + cluster_url + '?retryWrites=true&w=majority'
 const MONGODB_DB_NAME = 'clear-fashion';
 
 let client = new MongoClient(MONGODB_URI,  {'useUnifiedTopology': true});

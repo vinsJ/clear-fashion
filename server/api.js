@@ -20,7 +20,7 @@ app.get('/', (request, response) => {
   response.send({ 'ack': true });
 });
 
-app.get('/products/?:id', async function (request, response, next) {
+app.get('/products/:id', async function (request, response, next) {
   id = request.params.id;
   if (id == "search") {
     next();

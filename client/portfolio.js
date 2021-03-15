@@ -9,7 +9,7 @@ let currentPagination = {};
 let currentFilters = {
   "brand":"all",
   "checkReasonable":false,
-  "checkRecently":false,
+//  "checkRecently":false,
   "checkFavs":false,
   "sort":"none"
 };
@@ -32,13 +32,13 @@ const spanNbProductsDisplayed = document.querySelector('#nbProductsDisplayed');
 const spanP50 = document.querySelector('#p50');
 const spanP90 = document.querySelector('#p90');
 const spanP95 = document.querySelector('#p95');
-const spanLastDate = document.querySelector('#lastReleasedDate');
+// const spanLastDate = document.querySelector('#lastReleasedDate');
 
 const selectBrand = document.querySelector('#brand-select');
 const selectSort = document.querySelector('#sort-select');
 
 const checkReasonable = document.querySelector('#CheckReasonablePrice');
-const checkRecently = document.querySelector('#CheckRecentlyReleased');
+//const checkRecently = document.querySelector('#CheckRecentlyReleased');
 const checkFavs = document.querySelector('#checkFav');
 
 /**
@@ -47,6 +47,7 @@ const checkFavs = document.querySelector('#checkFav');
  * @param {Object} meta - pagination meta info
  */
 const setCurrentProducts = ({result, meta}) => {
+  console.log("setCurrentProducts: ", result);
   currentProducts = result;
   currentPagination = meta;
 };
@@ -60,15 +61,16 @@ const setCurrentProducts = ({result, meta}) => {
 const fetchProducts = async (page = 1, size = 12) => {
   try {
     const response = await fetch(
-      `https://clear-fashion-api.vercel.app?page=${page}&size=${size}`
+      //`https://clear-fashion-api.vercel.app?page=${page}&size=${size}`
+      `https://clearfashionvd.vercel.app/products/search?limit=${size}`
     );
     const body = await response.json();
-    if (body.success !== true) {
-      console.error(body);
+    if (body.status !== 200) {
+      console.error(body.status);
       return {currentProducts, currentPagination};
     }
-
-    return body.data;
+    console.log(body)
+    return {result : body.product, meta : ""};
   } catch (error) {
     console.error(error);
     return {currentProducts, currentPagination};
@@ -80,6 +82,7 @@ const fetchProducts = async (page = 1, size = 12) => {
  * @param  {Array} products
  */
 const renderProducts = products => {
+  console.log("renderProducts: ", products)
   currentIndicators["nbProductDisplayed"] = products.length;
   const fragment = document.createDocumentFragment();
   const div = document.createElement('div');
@@ -87,8 +90,8 @@ const renderProducts = products => {
     .map(product => {
         return `
         <div class="product" id=${product.uuid}>
-          <span>${product.brand}</span>
-          <a href="${product.link}" target="_blank">${product.name}</a>
+          <span>${product.brandName}</span>
+          <a href="${product.link}" target="_blank">${product.nameP}</a>
           <span>${product.price}</span>
         </div>
       `;      
@@ -144,7 +147,7 @@ const renderIndicators = pagination => {
   spanP50.innerHTML = currentIndicators["p50"];
   spanP90.innerHTML = currentIndicators["p90"];
   spanP95.innerHTML = currentIndicators["p95"];
-  spanLastDate.innerHTML = currentIndicators["lastDate"];
+  // spanLastDate.innerHTML = currentIndicators["lastDate"];
 
 };
 
@@ -364,11 +367,11 @@ checkReasonable.addEventListener('change', function() {
   renderIndicators(currentPagination);
 });
 
-checkRecently.addEventListener('change', function() {
-  currentFilters['checkRecently'] = this.checked;
-  renderProducts(filter(currentProducts,currentFilters));
-  renderIndicators(currentPagination);
-});
+// checkRecently.addEventListener('change', function() {
+//   currentFilters['checkRecently'] = this.checked;
+//   renderProducts(filter(currentProducts,currentFilters));
+//   renderIndicators(currentPagination);
+// });
 
 checkFavs.addEventListener('change', function() {
   currentFilters['checkFavs'] = this.checked;
