@@ -27,7 +27,7 @@ const getProducts = async function(filter) {
     }
 
     console.log("Looking for products matching: " + JSON.stringify(query) + " ... 🕵️‍♀️");
-    let res = await db.getQuery(query, true, 'API', filter.limit);
+    let res = await db.getQuery(query, true, 'API', filter.limit, filter.page);
     return res;
 }
 

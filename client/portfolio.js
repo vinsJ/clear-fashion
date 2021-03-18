@@ -47,7 +47,6 @@ const checkFavs = document.querySelector('#checkFav');
  * @param {Object} meta - pagination meta info
  */
 const setCurrentProducts = ({result, meta}) => {
-  console.log("setCurrentProducts: ", result);
   currentProducts = result;
   currentPagination = meta;
 };
@@ -62,14 +61,15 @@ const fetchProducts = async (page = 1, size = 12) => {
   try {
     const response = await fetch(
       //`https://clear-fashion-api.vercel.app?page=${page}&size=${size}`
-      `https://clearfashionvd.vercel.app/products/search?limit=${size}`
+      //`https://clearfashionvd.vercel.app/products/search?limit=${size}&page=${page}`
+      `http://localhost:8092/products/search?limit=${size}&page=${page}`
     );
+
     const body = await response.json();
     if (body.status !== 200) {
       console.error(body.status);
       return {currentProducts, currentPagination};
     }
-    console.log(body)
     return {result : body.product, meta : ""};
   } catch (error) {
     console.error(error);
@@ -82,7 +82,6 @@ const fetchProducts = async (page = 1, size = 12) => {
  * @param  {Array} products
  */
 const renderProducts = products => {
-  console.log("renderProducts: ", products)
   currentIndicators["nbProductDisplayed"] = products.length;
   const fragment = document.createDocumentFragment();
   const div = document.createElement('div');
@@ -108,6 +107,8 @@ const renderProducts = products => {
  * Render page selector
  * @param  {Object} pagination
  */
+
+//TODO: Config meta result from API (get the number of documents in the db, compute the number of pages)
 const renderPagination = pagination => {
   const {currentPage, pageCount} = pagination;
   const options = Array.from(
@@ -115,7 +116,7 @@ const renderPagination = pagination => {
     (value, index) => `<option value="${index + 1}">${index + 1}</option>`
   ).join('');
 
-  selectPage.innerHTML = options;
+  //selectPage.innerHTML = options;
   selectPage.selectedIndex = currentPage - 1;
 };
 

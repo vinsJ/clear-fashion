@@ -51,7 +51,7 @@ async function agg(db, query){
     }
 }
 
-async function query(db, query, sort = null, limit = null) {
+async function query(db, query, sort = null, limit = null, page = null) {
     try{
         const collection = db.collection('products');
         let res;
@@ -59,7 +59,9 @@ async function query(db, query, sort = null, limit = null) {
             res = await collection.find(query).toArray();
             return res;     
         } else if(sort && limit){
-            res = await collection.find(query).sort({price : 1}).limit(limit).toArray();
+            console.log((page-1)*limit);
+            // page -1 because the first page is 1 | limit + 1 because we don't want the last item of the previous page to be the first of the next page. 
+            res = await collection.find(query).sort({price : 1}).skip((page-1)*(limit+1)).limit(limit).toArray();
             return res;
         }   else {
             res = await collection.find(query).sort(sort).toArray();
@@ -72,7 +74,7 @@ async function query(db, query, sort = null, limit = null) {
     }
 }
 
-async function run(querry, sort = null, type, limit = null){
+async function run(querry, sort = null, type, limit = null, page = null){
     try{
         console.log("Connection ... 🦄")
         db = await connect();
@@ -80,7 +82,7 @@ async function run(querry, sort = null, type, limit = null){
         if(type == 'find'){
             res = await query(db, querry, sort);
         } else if(type == 'API'){
-            res = await query(db, querry, sort, limit);
+            res = await query(db, querry, sort, limit, page);
         } else {
             res = await agg(db, querry);
         }

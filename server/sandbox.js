@@ -91,21 +91,23 @@ function uploadData(){
 }
 
 async function getProducts(brandNameF = null, priceF = null, sort = null){
+  let res = []
   if(brandNameF){
-    let res = await db.getQuery({brandName: brandNameF}, null,'find');
+    res = await db.getQuery({brandName: brandNameF}, null,'find');
     console.log(testBrandName(brandNameF, res));
   }
 
   if(priceF){
-    let res = await db.getQuery({price: {$lt: priceF}}, null, 'find');
+    res = await db.getQuery({price: {$lt: priceF}}, null, 'find');
     console.log(res);
     console.log(testPrice(priceF, res));
   }
 
   if(sort){
-    let res = await db.getQuery(null, {price : -1}, 'find');
+    res = await db.getQuery(null, {price : -1}, 'find');
     console.log(testSortPrice(res));
   }
+  return res;
 
 }
 
@@ -168,4 +170,6 @@ const [,, eshop] = process.argv;
 
 //getProducts('Mud-Jeans', null, null);
 //getProducts(null, 30, null);
-//getProducts(null, null, true);
+getProducts(null, null, true).then(res =>{
+  console.log(res);
+})
