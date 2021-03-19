@@ -170,6 +170,11 @@ const [,, eshop] = process.argv;
 
 //getProducts('Mud-Jeans', null, null);
 //getProducts(null, 30, null);
-getProducts(null, null, true).then(res =>{
-  console.log(res);
+
+// getProducts(null, null, true).then(res =>{
+//   console.log(res);
+// })
+
+db.sandbox().then(res => {
+  console.log(res.length);
 })

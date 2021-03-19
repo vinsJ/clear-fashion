@@ -66,8 +66,8 @@ app.get('/products/search', async function (request, response) {
 
   result = await db.getProducts({limit, price, brand, page})
   if (result) {
-    if (result.length >= 1) {
-      response.send({ 'status': 200, 'product': result });
+    if (result.products.length >= 1) {
+      response.send({ 'status': 200, 'result': result });
     } else {
       response.send({ 'status': 204, 'message': 'No item found for given parameters', 'parameters' : {price, brand, limit, page} });
     }

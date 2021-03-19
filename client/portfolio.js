@@ -70,7 +70,7 @@ const fetchProducts = async (page = 1, size = 12) => {
       console.error(body.status);
       return {currentProducts, currentPagination};
     }
-    return {result : body.product, meta : ""};
+    return {result : body.result.products, meta : body.result.meta};
   } catch (error) {
     console.error(error);
     return {currentProducts, currentPagination};
@@ -109,6 +109,8 @@ const renderProducts = products => {
  */
 
 //TODO: Config meta result from API (get the number of documents in the db, compute the number of pages)
+// * Done ! 
+
 const renderPagination = pagination => {
   const {currentPage, pageCount} = pagination;
   const options = Array.from(
@@ -116,14 +118,14 @@ const renderPagination = pagination => {
     (value, index) => `<option value="${index + 1}">${index + 1}</option>`
   ).join('');
 
-  //selectPage.innerHTML = options;
+  selectPage.innerHTML = options;
   selectPage.selectedIndex = currentPage - 1;
 };
 
 const renderBrands = products => {
   let setBrands = new Set([]);
   products.forEach(product => {
-    setBrands.add(product.brand);
+    setBrands.add(product.brandName);
   })
 
   let options = '<option value="all">All</option>';
@@ -234,6 +236,8 @@ const updateIndicatorsPrice = products => {
  * 
  */
 
+// TODO : Filter on the database, not in here
+
 
 const filter = (productsArray, filters) => {
   let products = JSON.parse(JSON.stringify(productsArray));
@@ -273,7 +277,7 @@ const filterProductBrand = (products, brand) => {
     return products;
   }
 
-  return products.filter(product => product.brand === brand);
+  return products.filter(product => product.brandName === brand);
 };
 
 function dateDiffInDays(a, b) {
@@ -336,9 +340,9 @@ const filterPrice = (products, price, order) =>{
  * @type {[type]}
  */
 selectShow.addEventListener('change', event => {
-  fetchProducts(currentPagination.currentPage, parseInt(event.target.value))
+  fetchProducts(1, parseInt(event.target.value))
     .then(setCurrentProducts)
-    .then(() => render(filter(currentProducts,currentFilters)));
+    .then(() => render(filter(currentProducts,currentFilters), currentPagination));
 });
 /** 
 * Select the page of products to display
@@ -347,7 +351,7 @@ selectShow.addEventListener('change', event => {
 selectPage.addEventListener('change', event => {
   fetchProducts(parseInt(event.target.value), parseInt(selectShow.value))
     .then(setCurrentProducts)
-    .then(() => render(filter(currentProducts,currentFilters)));
+    .then(() => render(filter(currentProducts,currentFilters), currentPagination));
 });
 
 selectBrand.addEventListener('change', event => {

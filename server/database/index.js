@@ -59,7 +59,6 @@ async function query(db, query, sort = null, limit = null, page = null) {
             res = await collection.find(query).toArray();
             return res;     
         } else if(sort && limit){
-            console.log((page-1)*limit);
             // page -1 because the first page is 1 | limit + 1 because we don't want the last item of the previous page to be the first of the next page. 
             res = await collection.find(query).sort({price : 1}).skip((page-1)*(limit+1)).limit(limit).toArray();
             return res;
@@ -68,6 +67,17 @@ async function query(db, query, sort = null, limit = null, page = null) {
             return res;   
         }
   
+
+    } catch(e) {
+        console.log("🚨", e);
+    }
+}
+
+async function count(db) {
+    try{
+        const collection = db.collection('products');
+        nb_elements = await collection.countDocuments();
+        return nb_elements;
 
     } catch(e) {
         console.log("🚨", e);
@@ -83,6 +93,8 @@ async function run(querry, sort = null, type, limit = null, page = null){
             res = await query(db, querry, sort);
         } else if(type == 'API'){
             res = await query(db, querry, sort, limit, page);
+            nb_elements = await count(db);
+            return {products : res, meta : {count : nb_elements, pageCount : Math.round(nb_elements/(limit+1)), currentPage : page, pageSize : res.length}};
         } else {
             res = await agg(db, querry);
         }
@@ -105,5 +117,19 @@ async function insertData(data){
     }
 }
 
+async function sandbox(){
+    try{
+        console.log("Connection ... 🦄")
+        db = await connect();
+        const collection = db.collection('products');
+        res = await collection.find({}).sort({price : 1}).skip(1356).toArray();
+        return res;
+
+     } catch(e) {
+        console.log("🚨", e);
+    }
+}
+
 module.exports.getQuery = run;
 module.exports.insertData = insertData;
+module.exports.sandbox = sandbox; 
