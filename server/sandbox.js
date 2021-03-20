@@ -1,7 +1,8 @@
 /* eslint-disable no-console, no-process-exit */
 const dedicatedbrand = require('./sources/dedicatedbrand');
 const mudjeansbrands = require('./sources/mudjeansbrands');
-const adresseparisbrands = require('./sources/adresseparisbrands')
+const adresseparisbrands = require('./sources/adresseparisbrands');
+const loom = require('./sources/loom');
 
 const fs = require('fs')
 
@@ -28,13 +29,17 @@ async function sandbox (brand = None) {
       url = 'https://mudjeans.eu/collections/men'
       products = await mudjeansbrands.scrape(url);
     } else if(brand == 'Adresse-Paris'){
-      url = 'https://adresse.paris/630-toute-la-collection?id_category=630&n=110'
+      url = 'https://adresse.paris/630-toute-la-collection?id_category=630&n=110';
       products = await adresseparisbrands.scrape(url);
+    } else if(brand == 'Loom') {
+      url = 'https://www.loom.fr/collections/tous-les-vetements';
+      products = await loom.scrape(url);
     } else {
       console.log("sorry, the brand you're looking for doesn't exists here");
       process.exit(0);
     }
 
+    console.log('🏋️‍♂️ Products scrapp: ', products.length);
     console.log('Done scraping 🤩');
 
     updateFile('products.json', products);
@@ -85,6 +90,23 @@ function uploadData(){
         } else {
           console.log(res);
         }
+      });
+    }
+  });
+}
+
+function uploadOnFindData(){
+
+  fs.readFile('./products.json', 'utf-8', (err, data) => {
+    if(err){
+      throw err;
+    }
+
+    fileF = JSON.parse(data.toString());
+    if(fileF){
+      console.log("Uploading... 🛸")
+      db.upsertData(fileF).then(res => {
+        console.log("🪐 ", res)
       });
     }
   });
@@ -163,7 +185,7 @@ const [,, eshop] = process.argv;
 
 //* Uploading data test
 
-//uploadData();
+uploadData();
 
 
 //* Database link test
@@ -175,6 +197,8 @@ const [,, eshop] = process.argv;
 //   console.log(res);
 // })
 
-db.sandbox().then(res => {
-  console.log(res.length);
-})
+// db.sandbox().then(res => {
+//   console.log(res.length);
+// })
+
+//uploadOnFindData();

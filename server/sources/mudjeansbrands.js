@@ -52,8 +52,10 @@ const parse = data => {
                 .find(".product-image")
                 .attr('href');
 
-            let product = new Product(nameP, price, images, brandName, link);
-            return product;
+            if(link){
+                let product = new Product(nameP, price, images, brandName, link);
+                return product;
+            }
            // return {'name': nameP, 'price' : prices, 'category': ['Jeans'], images};
         })
         .get();

@@ -48,8 +48,11 @@ const parse = data => {
       } catch {
 
       }
-      let product = new Product(name, parseFloat(price), linkImages, brandName, link);
-      return product;
+      if(link){
+        let product = new Product(name, parseFloat(price), linkImages, brandName, link);
+        return product;
+      }
+
       //return {name, 'price' : {'price' : price, 'priceBeforeDiscount' : oldPrice, discount : price- oldPrice}, 'images' : linkImages};
     })
     .get();

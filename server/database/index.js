@@ -117,12 +117,27 @@ async function insertData(data){
     }
 }
 
+async function upsertData(data){
+    try{
+        db = await connect();
+        const collection = db.collection('products');
+        data.forEach(product => {
+            let filter = {uuid : product.uuid};
+            collection.findOneAndUpdate(filter, {$set : product}, {new : true, upsert : true});
+        });
+
+    } catch(e) {
+        console.log("🚨", e);
+    }
+}
+
 async function sandbox(){
     try{
         console.log("Connection ... 🦄")
         db = await connect();
         const collection = db.collection('products');
-        res = await collection.find({}).sort({price : 1}).skip(1356).toArray();
+        res = await collection.deleteMany({});
+        //res = await collection.find({'brandName' : "Dedicated"}).toArray();
         return res;
 
      } catch(e) {
@@ -133,3 +148,4 @@ async function sandbox(){
 module.exports.getQuery = run;
 module.exports.insertData = insertData;
 module.exports.sandbox = sandbox; 
+module.exports.upsertData = upsertData;

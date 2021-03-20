@@ -349,6 +349,7 @@ selectShow.addEventListener('change', event => {
 * @type {[type]}
 */
 selectPage.addEventListener('change', event => {
+  currentFilters.brand = "all";
   fetchProducts(parseInt(event.target.value), parseInt(selectShow.value))
     .then(setCurrentProducts)
     .then(() => render(filter(currentProducts,currentFilters), currentPagination));
