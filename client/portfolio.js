@@ -101,6 +101,7 @@ const renderProducts = products => {
   fragment.appendChild(div);
   sectionProducts.innerHTML = '<h2>Products</h2>';
   sectionProducts.appendChild(fragment);
+  renderFavorites(products);
 };
 
 /**
@@ -153,6 +154,17 @@ const renderIndicators = pagination => {
   // spanLastDate.innerHTML = currentIndicators["lastDate"];
 
 };
+
+const renderFavorites = products => {
+  if (currentFavsProducts.length > 0) {
+    products.forEach(p => {
+      if (currentFavsProducts.includes(p.uuid) == true) {
+        const pHTML = document.getElementById(p.uuid);
+        pHTML.className = "product fav";
+      }
+    });
+  }
+}
 
 const render = (products, pagination) => {
   updateIndicatorsPrice(products);
